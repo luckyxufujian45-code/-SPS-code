@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+results_real/
+build/
+*.spec
+dist/
+packaging_tests/
+results_demo/
+260915icpms源数据/
+*.zip
+*.log
+.env
+.env.*
