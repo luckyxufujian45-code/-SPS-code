@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 import numpy as np
-from desktop_app import calibrate_standard
+from desktop_app import calibrate_standard, load_trace
 
 
 class CalibrationTests(unittest.TestCase):
@@ -28,6 +28,23 @@ class CalibrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(ValueError):
                 calibrate_standard(self.make_standard(d, 3), 100)
+
+    def test_manual_time_reconstruction_and_calibration_integration(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = self.make_standard(d, 6)
+            t, y, original = load_trace(path, interval_ms=1)
+            self.assertAlmostEqual(original, .003)
+            self.assertAlmostEqual(t[1] - t[0], .001)
+            self.assertEqual(y[100], 2000.)
+            result = calibrate_standard(path, 100, interval_ms=1)
+            self.assertAlmostEqual(result['reference_median_net_counts'], 1.)
+
+    def test_invalid_manual_interval(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = self.make_standard(d, 6)
+            for value in [0, -1, float('nan')]:
+                with self.assertRaises(ValueError):
+                    load_trace(path, value)
 
 
 if __name__ == '__main__':

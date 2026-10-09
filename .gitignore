@@ -11,3 +11,4 @@ results_demo/
 *.log
 .env
 .env.*
+ICPMS_Windows_软件包/
